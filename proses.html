@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Memproses Kompresi...</title>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f9fafb;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            text-align: center;
+        }
+
+        h2 {
+            color: #2563eb;
+            margin-bottom: 20px;
+        }
+
+        .result {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin-top: 20px;
+            width: 400px;
+        }
+
+        .progress-container {
+            width: 100%;
+            background-color: #e5e7eb;
+            border-radius: 10px;
+            overflow: hidden;
+            height: 20px;
+            margin-top: 15px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background-color: #3b82f6;
+            transition: width 0.3s ease;
+        }
+
+        .download-btn {
+            margin-top: 20px;
+            background-color: #22c55e;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+            display: none;
+        }
+
+        .download-btn:hover {
+            background-color: #16a34a;
+        }
+    </style>
+</head>
+<body>
+
+<h2>🔄 Sedang Mengompres Ijazah...</h2>
+<div class="result">
+    <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <div id="info" style="margin-top: 20px; font-size: 15px; color: #555;">
+        Menyiapkan kompresi...
+    </div>
+
+    <a href="#" id="downloadLink" class="download-btn" download>🔽 Unduh File Hasil</a>
+</div>
+
+<script>
+    const name = sessionStorage.getItem("fileName");
+    const size = sessionStorage.getItem("fileSize");
+    const level = parseFloat(sessionStorage.getItem("level"));
+
+    const progressBar = document.getElementById("progressBar");
+    const info = document.getElementById("info");
+    const downloadLink = document.getElementById("downloadLink");
+
+    let progress = 0;
+
+    function simulateCompression() {
+        const interval = setInterval(() => {
+            progress += 5;
+            progressBar.style.width = progress + "%";
+
+            if (progress >= 100) {
+                clearInterval(interval);
+
+                if (name && size) {
+                    const originalKB = (size / 1024).toFixed(2);
+                    const compressedKB = (size * level / 1024).toFixed(2);
+                    const compressedName = "kompres_" + name;
+
+                    info.innerHTML = `
+                        ✅ Kompresi Selesai!<br><br>
+                        📄 <strong>Nama File:</strong> ${name}<br>
+                        💾 <strong>Ukuran Asli:</strong> ${originalKB} KB<br>
+                        📉 <strong>Setelah Kompresi (${level * 100}%):</strong> ${compressedKB} KB
+                    `;
+
+                    // Simulasi file PDF hasil
+                    const blob = new Blob(
+                        ["Isi hasil file kompresi (simulasi) - " + compressedName],
+                        { type: "application/pdf" }
+                    );
+                    const url = URL.createObjectURL(blob);
+
+                    downloadLink.href = url;
+                    downloadLink.download = compressedName;
+                    downloadLink.style.display = "inline-block";
+                } else {
+                    info.textContent = "❌ Data tidak ditemukan. Silakan kembali ke halaman utama.";
+                }
+            }
+        }, 100); // progress bar naik tiap 100ms (total ±2 detik)
+    }
+
+    simulateCompression();
+</script>
+
+</body>
+</html>
